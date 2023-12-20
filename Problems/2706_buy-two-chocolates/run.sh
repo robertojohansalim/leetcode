@@ -1,0 +1,1 @@
+g++ main.cpp -o build -std=c++20 && ./build
