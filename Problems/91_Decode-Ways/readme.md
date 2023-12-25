@@ -55,5 +55,15 @@ The last part of the paper shows the whole algorithm. The realization is that th
 8 | 11 + 1 + 10
 ```
 
+Therefore, as already written on paper, the PSEUDO code of the problem is as:
+```
+f("1230"):
+    count := 0
+    if lastDigitValid "0":
+        count += f("123")
+    if last2DigitValid "30":
+        count += f("12")
+    return count
+```
 
 
