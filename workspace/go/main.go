@@ -5,95 +5,42 @@ import (
 )
 
 func main() {
-	fmt.Println("Result:", diffWaysToCompute("2-1-1")) // [0,2]
+	fmt.Println("Result:", lexicalOrder(13)) // [0,2]
 
-	fmt.Println("Result:", diffWaysToCompute("2*3-4*5")) // [-34,-14,-10,-10,10]
-	fmt.Println("Result:", diffWaysToCompute("2*33-4*59"))
+	fmt.Println("Result:", lexicalOrder(2)) // [-34,-14,-10,-10,10]
+	fmt.Println("Result:", lexicalOrder(100))
 }
 
-func diffWaysToCompute(expression string) []int {
-	var result []int
-	arr := splitNumAndOperator(expression)
-	// fmt.Println(intArr, opArr)
-	result = recursive(arr)
+func lexicalOrder(n int) []int {
+	arr := make([]int, n)
 
-	return result
-}
-
-func splitNumAndOperator(expression string) []string {
-	var arr []string
-	lastDigit := ""
-	for _, char := range expression {
-		if isOp(string(char)) {
-			arr = append(arr, lastDigit, string(char))
-			lastDigit = ""
-		} else {
-			lastDigit = lastDigit + string(char)
+	idx := 0
+	for i := 1; i < 10; i++ {
+		if i > n || idx >= n {
+			break
 		}
+		arr[idx] = i
+		idx++
+		// Solve Inner Lexico With head of i
+		recursion(i*10, n, &idx, arr)
 	}
-	arr = append(arr, lastDigit)
 	return arr
 }
 
-func recursive(arr []string) []int {
-	var result []int
-
-	if len(arr) == 1 {
-		return []int{strToInt(arr[0])}
+func recursion(lead, n int, idx *int, arr []int) {
+	if lead > n {
+		return
 	}
 
-	if len(arr) == 2 {
-		return []int{calculate(strToInt(arr[0]), strToInt(arr[1]), arr[0])}
-	}
-
-	// var leftResult, rightResult []int
-	for i := 0; i < len(arr); i++ {
-		if !isOp(arr[i]) {
-			continue
+	for i := 0; i < 10; i++ {
+		curr := lead + i
+		if curr > n || *idx >= n {
+			return
 		}
-		// fmt.Println(arr[:i], ":", string(arr[i]), ":", arr[i+1:])
-		op := arr[i]
-		leftResult := recursive(arr[:i])
-		rightResult := recursive(arr[i+1:])
-
-		for _, left := range leftResult {
-			for _, right := range rightResult {
-				result = append(result, calculate(left, right, op))
-			}
-		}
+		// fmt.Println()
+		// fmt.Println(arr)
+		(arr[*idx]) = curr
+		*idx++
+		recursion(curr*10, n, idx, arr)
 	}
-
-	return result
-}
-
-func calculate(a, b int, opStr string) int {
-	// func calculate(aStr, bStr, opStr string) int {
-	// a := strToInt(aStr)
-	// b := strToInt(bStr)
-	switch opStr {
-	case "+":
-		return a + b
-	case "-":
-		return a - b
-	case "*":
-		return a * b
-	}
-	return 0
-}
-
-func strToInt(str string) (num int) {
-	fmt.Sscanf(str, "%d", &num)
-	return num
-}
-
-func isOp(char string) bool {
-	switch char {
-	case "+":
-		return true
-	case "-":
-		return true
-	case "*":
-		return true
-	}
-	return false
 }
